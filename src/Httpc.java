@@ -12,11 +12,11 @@ public class Httpc {
 			System.out.println(args[i]);
 		}
 		
-		 //getExample();
-		 //post1Example();
-		//post2Example();
-		post3Example();
-		//getRedirectExample();
+		 getExample();
+//		 post1Example();
+//		 post2Example();
+//		 post3Example();
+//		 getRedirectExample();
 	}
 	
 	public static void post1Example() {
@@ -45,7 +45,6 @@ public class Httpc {
 				response.append((char) data);
 				data = inputStream.read();
 			}
-			
 			System.out.println(response);
 			socket.close();
 			
@@ -139,7 +138,7 @@ public class Httpc {
 	public static void getExample() {
 		try {
 			Socket socket = new Socket("postman-echo.com", 80);
-			
+
 			InputStream inputStream = socket.getInputStream();
 			OutputStream outputStream = socket.getOutputStream();
 			

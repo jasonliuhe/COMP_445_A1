@@ -1,2 +1,7 @@
 # Default ignored files
 /workspace.xml
+/out
+/misc.xml
+/modules.xml
+/vcs.xml
+/COMP_445_A1.iml
