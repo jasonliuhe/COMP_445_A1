@@ -12,10 +12,10 @@ public class Httpc {
 			System.out.println(args[i]);
 		}
 		
-		 getExample();
+//		 getExample();
 //		 post1Example();
 //		 post2Example();
-//		 post3Example();
+		 post3Example();
 //		 getRedirectExample();
 	}
 	
@@ -33,7 +33,6 @@ public class Httpc {
 							+ "Content-Length: " + body.length() +"\r\n"
 							+ "\r\n"
 							+ body;
-			
 			outputStream.write(request.getBytes());
 			outputStream.flush();
 			
@@ -114,7 +113,7 @@ public class Httpc {
 							+ "Content-Length: " + body.length() +"\r\n"
 							+ "\r\n"
 							+ body;
-			
+			System.out.println(request);
 			outputStream.write(request.getBytes());
 			outputStream.flush();
 			
