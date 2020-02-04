@@ -54,19 +54,8 @@ public class Request {
 
 
 
-    String url;
-    String parameter[];
+
     String request = "";
-    String bodyString = "";
-    Request_Type rt;
-    Content_Type ct;
-    HTTP_version httpv;
-    Body b = new Body();
-    Query_Parameters q = new Query_Parameters();
-    Request r;
-
-
-
     Body body = new Body();
     Query_Parameters query = new Query_Parameters();
     Content_Type content_type = Content_Type.x_www_form_urlencoded;
@@ -111,82 +100,6 @@ public class Request {
 
     public String getRequest() {
         return request;
-    }
-
-
-    public String getBody(String str){
-
-        //TODO
-
-        return bodyString;
-    }
-
-
-    public void execute(String str){
-
-        this.parameter = str.split("\\s+");
-
-        if (parameter.length <= 0 || !parameter[0].equals("httpc")){
-            System.out.println("Invalid command line, please type in again.");
-        }
-        else {
-
-            for (int i = 1; i < parameter.length; i++) {
-
-                if (parameter[i].equals("help")) {
-                    if (parameter[i + 1].equals("get")) {
-                        Help.getHelp();
-                    } else if (parameter[i + 1].equals("post")) {
-                        Help.postHelp();
-                    } else {
-                        Help.help();
-                    }
-                }
-
-                else if (parameter[i].equals("-v")){
-                    //TODO
-                }
-
-                else if (parameter[i].equals("-h")){
-                    //TODO
-                }
-
-                else if (parameter[i].equals("get")){
-                    this.rt = Request_Type.GET;
-                }
-
-                else if (parameter[i].equals("post")){
-                    this.rt = Request_Type.POST;
-                }
-
-                else if (parameter[i].contains("http://")){
-                    this.url = parameter[i];
-                }
-
-                else if (parameter[i].equals("-d")){
-                    //TODO
-                }
-
-                else if (parameter[i].equals("-f")){
-                    //TODO
-                }
-
-            }
-
-        }
-
-
-
-        if (rt.equals(Request_Type.GET)){
-            r = new Request(rt);
-            new GET(url, 80, r);
-        }else {
-            r = new Request(rt, ct, httpv, q, new Body("")); //Body method not completed yet!!!
-            new POST(url, 80, r);
-        }
-
-
-
     }
 
 
