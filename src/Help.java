@@ -1,6 +1,6 @@
 public class Help {
 
-    public static void helpMenu()
+    public static void help()
     {
         System.out.println("httpc is a curl-like application but supports HTTP protocol only.\n"
                 + "Usage:\n"
@@ -15,7 +15,7 @@ public class Help {
     }
 
 
-    public static void getHelpMenu()
+    public static void getHelp()
     {
         System.out.println(
                 "Usage: httpc get [-v] [-h key:value] URL\n"
@@ -28,7 +28,7 @@ public class Help {
 
     }
 
-    public static void postHelpMenu()
+    public static void postHelp()
     {
         System.out.println(
                 "Usage: httpc httpc post [-v] [-h key:value] [-d inline-data] [-f file] URL\n"

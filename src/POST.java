@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class POST {
+
     public POST(String host, int port, Request request){
         try {
             Socket socket = new Socket(host, port);
