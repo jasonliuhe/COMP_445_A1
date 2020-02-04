@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Scanner;
 
 public class Httpc {
@@ -10,17 +12,18 @@ public class Httpc {
         parameter = scanner.nextLine();
 
         while (!parameter.equals("quit")){
-            try
-            {
+            try {
                 //the parameter goes here and process due to the HTTP Client Library
-                Request req = new Request();
-                req.execute(parameter);
+                execute(parameter);
 
             }
-            catch(Exception e)
-            {
-
-                System.out.println("Error, please type in the right command line");
+            catch(MalformedURLException URLe){
+                System.out.println(URLe);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+//                System.out.println(e.printStackTrace());
+                System.out.println("Please type in the right command line");
             }
             System.out.println("\nEnter the command line here: ");
             parameter = scanner.nextLine();
@@ -32,89 +35,127 @@ public class Httpc {
 
     }
 
-    String url;
-    String parameter[];
-    String bodyString = "";
-    Request.Request_Type rt;
-    Request.Content_Type ct;
-    Request.HTTP_version httpv;
-    Body b = new Body();
-    Query_Parameters q = new Query_Parameters();
-    Request r;
 
 
-    public String getBody(String str){
 
-        //TODO
+//    public String getBody(String str){
+//
+//        //TODO
+//
+//        return bodyString;
+//    }
 
-        return bodyString;
-    }
 
+    public static void execute(String str) throws MalformedURLException {
 
-    public void execute(String str){
+        String parameters[];
+        URL url = null;
+        String urlString = null;
 
-        this.parameter = str.split("\\s+");
+        Help help = new Help();
+        String bodyString = "";
+        Request.Request_Type requestType = null;
+        Request.Content_Type contentType = null;
+        Request.HTTP_version httpVersion = null;
+        Body body = null;
+        Query_Parameters queryParameters = new Query_Parameters();
+        Request request;
 
-        if (parameter.length <= 0 || !parameter[0].equals("httpc")){
-            System.out.println("Invalid command line, please type in again.");
+        parameters = str.split("\\s+");
+//        System.out.println(parameters.length);
+//        for (int j = 0; j < parameters.length; j++){
+//            System.out.println(parameters[j]);
+//        }
+
+        if (parameters.length <= 1 || !parameters[0].equals("httpc")){
+            System.out.println("Invalid command line.");
         }
         else {
 
-            for (int i = 1; i < parameter.length; i++) {
+            for (int i = 1; i < parameters.length; i++) {
 
-                if (parameter[i].equals("help")) {
-                    if (parameter[i + 1].equals("get")) {
-                        Help.getHelp();
-                    } else if (parameter[i + 1].equals("post")) {
-                        Help.postHelp();
+                if (parameters[i].equals("help")) {
+
+                    if (parameters.length > i+1 && parameters[i + 1].equals("get")) {
+                        help.getHelp();
+
+                    } else if (parameters.length > i+1 && parameters[i + 1].equals("post")) {
+                        help.postHelp();
+
                     } else {
-                        Help.help();
+                        help.help();
                     }
                 }
 
-                else if (parameter[i].equals("-v")){
-                    //TODO
+//                else if (parameters[i].equals("-v")){
+//                    //TODO
+//                }
+//
+//                else if (parameters[i].equals("-h")){
+//                    //TODO
+//                }
+
+                else if (parameters[i].equals("get")){
+                    requestType = Request.Request_Type.GET;
                 }
 
-                else if (parameter[i].equals("-h")){
-                    //TODO
+                else if (parameters[i].equals("post")){
+                    requestType = Request.Request_Type.POST;
                 }
 
-                else if (parameter[i].equals("get")){
-                    this.rt = Request.Request_Type.GET;
+//                else if (parameters[i].contains("application/json")){
+//                    contentType = Request.Content_Type.application_json;
+//                }
+//
+//                else if (parameters[i].contains("x_www_form_urlencoded")){
+//                    contentType = Request.Content_Type.x_www_form_urlencoded;
+//                }
+//
+//                else if (parameters[i].contains("multipart_form_data")){
+//                    contentType = Request.Content_Type.multipart_form_data;
+//                }
+
+                else if (parameters[i].contains("http://")){
+                    //System.out.println("in http");
+                    urlString = parameters[i];
+                    String urlStringNoQuote = urlString.replace("\'","");
+                    System.out.println(urlStringNoQuote);
+                    url = new URL(urlStringNoQuote);
+                    body = new Body(url.getQuery());
+                    System.out.println(body.getBodyContent());
+                    System.out.println("after http");
+
                 }
 
-                else if (parameter[i].equals("post")){
-                    this.rt = Request.Request_Type.POST;
+                else if (parameters[i].contains("version")){
+                    if (parameters[i].contains("1.0")){
+                        httpVersion = Request.HTTP_version.HTTP1_0;
+                    }else {
+                        httpVersion = Request.HTTP_version.HTTP1_1;
+                    }
                 }
 
-                else if (parameter[i].contains("http://")){
-                    this.url = parameter[i];
-                }
+//                else if (parameters[i].equals("-d")){
+//                    //TODO
+//                }
+//
+//                else if (parameters[i].equals("-f")){
+//                    //TODO
+//                }
 
-                else if (parameter[i].equals("-d")){
-                    //TODO
-                }
 
-                else if (parameter[i].equals("-f")){
-                    //TODO
-                }
 
             }
 
         }
 
-
-
-        if (rt.equals(Request.Request_Type.GET)){
-            r = new Request(rt);
-            new GET(url, 80, r);
+        if (requestType.equals(Request.Request_Type.GET)){
+            request = new Request(requestType);
+            new GET(urlString, 80, request);
         }else {
-            r = new Request(rt, ct, httpv, q, new Body("")); //Body method not completed yet!!!
-            new POST(url, 80, r);
+            request = new Request(requestType, contentType, httpVersion, queryParameters, body); //Body method not completed yet!!!
+            new POST(urlString, 80, request);
         }
-
-
 
     }
 
