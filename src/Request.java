@@ -64,7 +64,7 @@ public class Request {
 
 
     public Request(){
-
+        request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
     }
 
 //    constructor of the Request
@@ -80,13 +80,28 @@ public class Request {
         }
     }
 
-//    another constructor of the Request
+//    constructor of the Request for GET
+//    user must choose the request_type
+    public Request(Request_Type request_type, Query_Parameters query_parameters, HTTP_version http_version){
+        this.query = query_parameters;
+        this.http_version = http_version;
+        if (request_type.equals(Request_Type.GET)){
+            request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
+        } else {
+            request = "POST /post" + query.getQuery_Parameter() + http_version.toString()
+                + "Content-Type:" + content_type.toString()
+                + "Content-Length: " + body.getBodyLength() + "\r\n"
+                + "\r\n" + body.getBodyContent();
+        }
+    }
+
+//    another constructor of the Request for POST
 //    If request_Type is GET, then the Content_Type and Body should be empty.
-    public Request(Request_Type request_type, Content_Type type, HTTP_version version, Query_Parameters query_parameters, Body body){
+    public Request(Request_Type request_type, Content_Type type, HTTP_version http_version, Query_Parameters query_parameters, Body body){
         this.body = body;
         this.content_type = type;
         this.query = query_parameters;
-        http_version = version;
+        this.http_version = http_version;
 
         if (request_type.equals(Request_Type.GET)){
             this.request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";

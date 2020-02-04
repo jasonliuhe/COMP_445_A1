@@ -15,8 +15,8 @@ public class Example_Httpc {
 //		 getExample();
 //		 post1Example();
 //		 post2Example();
-		 post3Example();
-//		 getRedirectExample();
+//		 post3Example();
+		 getRedirectExample();
 	}
 	
 	public static void post1Example() {
@@ -173,7 +173,7 @@ public class Example_Httpc {
 			OutputStream outputStream = socket.getOutputStream();
 			
 			String request = "GET / HTTP/1.0\r\nHost: www.google.com\r\n\r\n";
-			//String request = "GET / HTTP/1.0\r\n\r\n";
+//			String request = "GET / HTTP/1.0\r\n\r\n";
 			
 			outputStream.write(request.getBytes());
 			outputStream.flush();
