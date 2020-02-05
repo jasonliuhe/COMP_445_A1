@@ -5,30 +5,66 @@ import java.net.Socket;
 
 public class POST {
 
-    public POST(String host, int port, Request request){
-        try {
-            Socket socket = new Socket(host, port);
+    public POST(String host, int port, Request request, boolean displayHeader){
+        if (displayHeader){
+            try {
+                Socket socket = new Socket(host, port);
 
-            InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream();
+                InputStream input = socket.getInputStream();
+                OutputStream output = socket.getOutputStream();
 
-            output.write(request.getRequest().getBytes());
-            output.flush();
+                output.write(request.getRequest().getBytes());
+                output.flush();
 
-            StringBuilder response = new StringBuilder();
+                StringBuilder response = new StringBuilder();
 
-            int data = input.read();
+                int data = input.read();
 
-            while (data != -1){
-                response.append((char) data);
-                data = input.read();
+                while (data != -1){
+                    response.append((char) data);
+                    data = input.read();
+                }
+
+                System.out.println(response);
+                socket.close();
+
+            } catch (IOException e){
+                e.printStackTrace();
             }
+        } else {
+            try {
+                Socket socket = new Socket(host, port);
 
-            System.out.println(response);
-            socket.close();
+                InputStream input = socket.getInputStream();
+                OutputStream output = socket.getOutputStream();
 
-        } catch (IOException e){
-            e.printStackTrace();
+                output.write(request.getRequest().getBytes());
+                output.flush();
+
+                StringBuilder response = new StringBuilder();
+
+                int data = input.read();
+                boolean findkey = false;
+
+                while (data != -1){
+                    char tem = (char) data;
+                    if(tem == '{'){
+                        findkey = true;
+                    }
+                    if (findkey){
+                        response.append((char) data);
+                    }
+
+                    data = input.read();
+                }
+
+                System.out.println(response);
+                socket.close();
+
+            } catch (IOException e){
+                e.printStackTrace();
+            }
         }
+
     }
 }
