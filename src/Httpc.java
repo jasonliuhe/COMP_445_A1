@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+import java.io.*;
 
 public class Httpc {
 
@@ -34,13 +35,6 @@ public class Httpc {
     }
 
 
-//    public String getBody(String str){
-//
-//        //TODO
-//
-//        return bodyString;
-//    }
-
 
     public static void execute(String str) throws MalformedURLException {
 
@@ -49,18 +43,18 @@ public class Httpc {
         String urlString = null; //
         String hostString = "";
         String bodyString = "";
-        boolean v = false; //if user input contains "-v", set v to true
+        boolean v = false; //if user input contains "-v", set v to true, GET will display header
         boolean h = false;
         boolean d = false;
         boolean f = false;
         //String associateHeader; //key:value pairs,
 
         Help help = new Help();
+        String contentType = "application/json";
         Request.Request_Type requestType = Request.Request_Type.GET;
-        Request.Content_Type contentType = Request.Content_Type.application_json;
         Request.HTTP_version httpVersion = Request.HTTP_version.HTTP1_0;
         Body body = null;
-        Body associateHeader = null;
+        //Body associateHeader = null;
         Query_Parameters queryParameters = new Query_Parameters();
         Request request;
 
@@ -99,18 +93,24 @@ public class Httpc {
                     //TODO
                     h = true;
 
-                    if (parameters[i + 1].contains("application/json")) {
-                        contentType = Request.Content_Type.application_json;
-                    } else if (parameters[i + 1].contains("x_www_form_urlencoded")) {
-                        contentType = Request.Content_Type.x_www_form_urlencoded;
-                    } else if (parameters[i + 1].contains("multipart_form_data")) {
-                        contentType = Request.Content_Type.multipart_form_data;
+                    for (int l = 0; l < parameters[i+1].length(); l++){
+                        if (parameters[i+1].charAt(l)==':'){
+                            contentType += parameters[i+1].charAt(l);
+                        }
                     }
+
+//                    if (parameters[i + 1].contains("x_www_form_urlencoded")) {
+//                        contentType = "x_www_form_urlencoded";
+//                    } else if (parameters[i + 1].contains("multipart_form_data")) {
+//                        contentType = "multipart_form_data";
+//                    }
 
                 } else if (parameters[i].equals("get")) {
                     requestType = Request.Request_Type.GET;
+
                 } else if (parameters[i].equals("post")) {
                     requestType = Request.Request_Type.POST;
+
                 } else if (parameters[i].contains("http://")) {
                     //System.out.println("in http");
                     urlString = parameters[i];
@@ -120,9 +120,7 @@ public class Httpc {
                     url = new URL(urlStringNoQuote);
 
                     hostString = url.getHost();
-                    //body = new Body(url.getQuery());
                     queryParameters = new Query_Parameters(url.getQuery());
-                    System.out.println(body.getBodyContent());
 
                 } else if (parameters[i].contains("version")) {
                     if (parameters[i].contains("1.0")) {
@@ -130,13 +128,43 @@ public class Httpc {
                     } else {
                         httpVersion = Request.HTTP_version.HTTP1_1;
                     }
+
                 } else if (parameters[i].equals("-d")) {
                     //TODO
+                    //body = new Body(parameters[i + 1]);
 
-                    body = new Body(parameters[i + 1]);
+                    if (parameters[i+1].contains("{")){
+
+                        for (int j = 0; j < str.length(); j++){
+                            if (str.charAt(j) == '{') {
+                                for (int k = j; k < str.length(); k++){
+                                    if (str.charAt(k) == '}'){
+                                        bodyString += '}';
+                                        break;
+                                    } else {
+                                        bodyString += str.charAt(k);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    body = new Body(bodyString);
 
                 } else if (parameters[i].equals("-f")) {
                     //TODO
+                    try{
+                        Reader fileReader = new FileReader(parameters[i+1]);
+                        int data = fileReader.read();
+                        while (data != -1){
+                            bodyString += (char)data;
+                        }
+                        body = new Body(bodyString);
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
 
                 }
@@ -149,17 +177,13 @@ public class Httpc {
         if (requestType.equals(Request.Request_Type.GET) && urlString != null) {
             request = new Request(requestType, queryParameters, httpVersion);
 
-            if (v == true) {
-                new GET(hostString, 80, request);
-//            }else {
-//                //getString = new GET(hostString, 80, request);
-//            }
+            new GET(hostString, 80, request, v);
 
-            } else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
-                request = new Request(requestType, contentType, httpVersion, queryParameters, body); //Body method not completed yet!!!
-                new POST(hostString, 80, request);
-            }
+        } else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
+            System.out.println(body.getBodyContent());
+            request = new Request(requestType, contentType, httpVersion, queryParameters, body);
 
+            new POST(hostString, 80, request, v);
         }
 
     }
