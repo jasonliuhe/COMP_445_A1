@@ -62,10 +62,8 @@ public class Httpc {
         StringBuilder postString;
 
         parameters = str.split("\\s+");
-//        System.out.println(parameters.length);
-//        for (int j = 0; j < parameters.length; j++){
-//            System.out.println(parameters[j]);
-//        }
+
+        
 
         if (parameters.length <= 1 || !parameters[0].equals("httpc")) {
             System.out.println("Invalid command line.");
@@ -120,7 +118,11 @@ public class Httpc {
                     url = new URL(urlStringNoQuote);
 
                     hostString = url.getHost();
-                    queryParameters = new Query_Parameters(url.getQuery());
+                    if (url.getQuery() == null) {
+                        new Query_Parameters("");
+                    } else {
+                        new Query_Parameters(url.getQuery());
+                    }
 
                 } else if (parameters[i].contains("version")) {
                     if (parameters[i].contains("1.0")) {
@@ -180,7 +182,6 @@ public class Httpc {
             new GET(hostString, 80, request, v);
 
         } else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
-            System.out.println(body.getBodyContent());
             request = new Request(requestType, contentType, httpVersion, queryParameters, body);
 
             new POST(hostString, 80, request, v);
