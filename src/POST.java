@@ -23,9 +23,9 @@ public class POST {
                 response.append((char) data);
                 data = input.read();
             }
+
             System.out.println(response);
             socket.close();
-
 
         } catch (IOException e) {
             e.printStackTrace();

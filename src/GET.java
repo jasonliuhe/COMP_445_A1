@@ -26,6 +26,7 @@ public class GET {
 
             System.out.println(response);
             socket.close();
+
         } catch (IOException e){
             e.printStackTrace();
         }

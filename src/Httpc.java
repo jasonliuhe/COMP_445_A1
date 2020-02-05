@@ -48,18 +48,22 @@ public class Httpc {
 
     public static void execute(String str) throws MalformedURLException {
 
-        String parameters[];
         URL url = null;
-        String urlString = null;
+        String parameters[];
+        String urlString = null; //
+        String hostString = "";
+        String bodyString = "";
 
         Help help = new Help();
-        String bodyString = "";
-        Request.Request_Type requestType = null;
-        Request.Content_Type contentType = null;
-        Request.HTTP_version httpVersion = null;
+        Request.Request_Type requestType = Request.Request_Type.GET;
+        Request.Content_Type contentType = Request.Content_Type.application_json;
+        Request.HTTP_version httpVersion = Request.HTTP_version.HTTP1_0;
         Body body = null;
         Query_Parameters queryParameters = new Query_Parameters();
         Request request;
+
+        StringBuilder getString;
+        StringBuilder postString;
 
         parameters = str.split("\\s+");
 //        System.out.println(parameters.length);
@@ -103,27 +107,30 @@ public class Httpc {
                     requestType = Request.Request_Type.POST;
                 }
 
-//                else if (parameters[i].contains("application/json")){
-//                    contentType = Request.Content_Type.application_json;
-//                }
-//
-//                else if (parameters[i].contains("x_www_form_urlencoded")){
-//                    contentType = Request.Content_Type.x_www_form_urlencoded;
-//                }
-//
-//                else if (parameters[i].contains("multipart_form_data")){
-//                    contentType = Request.Content_Type.multipart_form_data;
-//                }
+                else if (parameters[i].contains("application/json")){
+                    contentType = Request.Content_Type.application_json;
+                }
+
+                else if (parameters[i].contains("x_www_form_urlencoded")){
+                    contentType = Request.Content_Type.x_www_form_urlencoded;
+                }
+
+                else if (parameters[i].contains("multipart_form_data")){
+                    contentType = Request.Content_Type.multipart_form_data;
+                }
 
                 else if (parameters[i].contains("http://")){
                     //System.out.println("in http");
                     urlString = parameters[i];
-                    String urlStringNoQuote = urlString.replace("\'","");
-                    System.out.println(urlStringNoQuote);
+                    String urlStringNoQuote = urlString.replace("\'",""); //remove '' from string
+                    //System.out.println(urlStringNoQuote);
+
                     url = new URL(urlStringNoQuote);
+
+                    hostString = url.getHost();
                     body = new Body(url.getQuery());
+                    queryParameters = new Query_Parameters(url.getQuery());
                     System.out.println(body.getBodyContent());
-                    System.out.println("after http");
 
                 }
 
@@ -149,12 +156,12 @@ public class Httpc {
 
         }
 
-        if (requestType.equals(Request.Request_Type.GET)){
-            request = new Request(requestType);
-            new GET(urlString, 80, request);
-        }else {
+        if (requestType.equals(Request.Request_Type.GET) && urlString != null){
+            request = new Request(requestType, queryParameters, httpVersion);
+            new GET(hostString, 80, request);
+        }else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
             request = new Request(requestType, contentType, httpVersion, queryParameters, body); //Body method not completed yet!!!
-            new POST(urlString, 80, request);
+            new POST(hostString, 80, request);
         }
 
     }
