@@ -32,33 +32,11 @@ public class Request {
         }
     }
 
-//    enum Content_Type is to define the content type of the body.
-//    by default using x-www-form-urlencoded.
-    public enum Content_Type{
-        application_json("application/json\r\n"),
-        x_www_form_urlencoded("x-www-form-urlencoded\r\n"),
-        multipart_form_data("multipart/form-data\r\n");
-
-        private String value;
-
-        Content_Type(String s) {
-            value = s;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
-
-
-
-
 
     String request = "";
     Body body = new Body();
     Query_Parameters query = new Query_Parameters();
-    Content_Type content_type = Content_Type.x_www_form_urlencoded;
+    String content_type = "application/json\r\n";
     HTTP_version http_version = HTTP_version.HTTP1_0;
 
 
@@ -74,7 +52,7 @@ public class Request {
             request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
         } else {
             request = "POST /post" + query.getQuery_Parameter() + http_version.toString()
-                + "Content-Type:" + content_type.toString()
+                + "Content-Type:" + content_type
                 + "Content-Length: " + body.getBodyLength() + "\r\n"
                 + "\r\n" + body.getBodyContent();
         }
@@ -89,7 +67,7 @@ public class Request {
             request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
         } else {
             request = "POST /post" + query.getQuery_Parameter() + http_version.toString()
-                + "Content-Type:" + content_type.toString()
+                + "Content-Type:" + content_type
                 + "Content-Length: " + body.getBodyLength() + "\r\n"
                 + "\r\n" + body.getBodyContent();
         }
@@ -97,9 +75,9 @@ public class Request {
 
 //    another constructor of the Request for POST
 //    If request_Type is GET, then the Content_Type and Body should be empty.
-    public Request(Request_Type request_type, Content_Type type, HTTP_version http_version, Query_Parameters query_parameters, Body body){
+    public Request(Request_Type request_type, String content_type, HTTP_version http_version, Query_Parameters query_parameters, Body body){
         this.body = body;
-        this.content_type = type;
+        this.content_type = content_type;
         this.query = query_parameters;
         this.http_version = http_version;
 
@@ -107,7 +85,7 @@ public class Request {
             this.request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
         } else {
             this.request = "POST /post" + query.getQuery_Parameter()  + http_version.toString()
-                + "Content-Type:" + content_type.toString()
+                + "Content-Type:" + this.content_type
                 + "Content-Length: " + body.getBodyLength() + "\r\n"
                 + "\r\n" + body.getBodyContent();
         }
