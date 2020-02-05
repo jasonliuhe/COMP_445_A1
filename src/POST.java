@@ -27,7 +27,7 @@ public class POST {
             System.out.println(response);
             socket.close();
 
-        } catch (IOException e) {
+        } catch (IOException e){
             e.printStackTrace();
         }
     }

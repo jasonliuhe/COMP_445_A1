@@ -5,6 +5,8 @@ import java.net.Socket;
 
 public class GET {
 
+
+
     public GET(String host, int port, Request request){
         try {
             Socket socket = new Socket(host, port);
@@ -31,4 +33,38 @@ public class GET {
             e.printStackTrace();
         }
     }
+
+//    public void String getResponse (String host, int port, Request request){
+//
+//        StringBuilder response = new StringBuilder();
+//
+//        try {
+//            Socket socket = new Socket(host, port);
+//
+//            InputStream input = socket.getInputStream();
+//            OutputStream output = socket.getOutputStream();
+//
+//            output.write(request.getRequest().getBytes());
+//            output.flush();
+//
+//
+//
+//            int data = input.read();
+//
+//            while (data != -1){
+//                response.append((char) data);
+//                data = input.read();
+//            }
+//
+//            System.out.println(response);
+//            socket.close();
+//
+//        } catch (IOException e){
+//            e.printStackTrace();
+//        }
+//
+//
+//        return response.toString();
+//    }
+
 }
