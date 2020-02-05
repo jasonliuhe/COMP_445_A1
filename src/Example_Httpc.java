@@ -15,8 +15,8 @@ public class Example_Httpc {
 //		 getExample();
 //		 post1Example();
 //		 post2Example();
-//		 post3Example();
-		 getRedirectExample();
+		 post3Example();
+//		 getRedirectExample();
 	}
 	
 	public static void post1Example() {

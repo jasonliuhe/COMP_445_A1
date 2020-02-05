@@ -85,7 +85,7 @@ public class Request {
             this.request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
         } else {
             this.request = "POST /post" + query.getQuery_Parameter()  + http_version.toString()
-                + "Content-Type:" + this.content_type
+                + "Content-Type:" + this.content_type + "\r\n"
                 + "Content-Length: " + body.getBodyLength() + "\r\n"
                 + "\r\n" + body.getBodyContent();
         }
