@@ -65,11 +65,6 @@ public class Request {
         this.http_version = http_version;
         if (request_type.equals(Request_Type.GET)){
             request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
-        } else {
-            request = "POST /post" + query.getQuery_Parameter() + http_version.toString()
-                + "Content-Type:" + content_type
-                + "Content-Length: " + body.getBodyLength() + "\r\n"
-                + "\r\n" + body.getBodyContent();
         }
     }
 
@@ -81,9 +76,7 @@ public class Request {
         this.query = query_parameters;
         this.http_version = http_version;
 
-        if (request_type.equals(Request_Type.GET)){
-            this.request = "GET /get" + query.getQuery_Parameter() + http_version.toString() + "\r\n";
-        } else {
+        if(request_type.equals(Request_Type.POST)){
             this.request = "POST /post" + query.getQuery_Parameter()  + http_version.toString()
                 + "Content-Type:" + this.content_type + "\r\n"
                 + "Content-Length: " + body.getBodyLength() + "\r\n"
