@@ -54,12 +54,13 @@ public class Httpc {
         Request.Request_Type requestType = Request.Request_Type.GET;
         Request.HTTP_version httpVersion = Request.HTTP_version.HTTP1_0;
         Body body = null;
-        //Body associateHeader = null;
         Query_Parameters queryParameters = new Query_Parameters();
         Request request;
 
-        String getString;
-        StringBuilder postString;
+        File file = null;
+        FileReader fileReader;
+
+
 
         parameters = str.split("\\s+");
 
@@ -93,15 +94,14 @@ public class Httpc {
 
                     for (int l = 0; l < parameters[i+1].length(); l++){
                         if (parameters[i+1].charAt(l)==':'){
-                            contentType += parameters[i+1].charAt(l);
+                            contentType = "";
+                            for (int m = l+1; m < parameters[i+1].length(); m++){
+                                contentType += parameters[i+1].charAt(m);
+                            }
+
                         }
                     }
 
-//                    if (parameters[i + 1].contains("x_www_form_urlencoded")) {
-//                        contentType = "x_www_form_urlencoded";
-//                    } else if (parameters[i + 1].contains("multipart_form_data")) {
-//                        contentType = "multipart_form_data";
-//                    }
 
                 } else if (parameters[i].equals("get")) {
                     requestType = Request.Request_Type.GET;
@@ -133,39 +133,61 @@ public class Httpc {
 
                 } else if (parameters[i].equals("-d")) {
                     //TODO
-                    //body = new Body(parameters[i + 1]);
+                    d = true;
 
-                    if (parameters[i+1].contains("{")){
+//                    if (parameters[i+1].contains("{")){
+//
+//                        for (int j = 0; j < str.length(); j++){
+//                            if (str.charAt(j) == '{') {
+//                                for (int k = j; k < str.length(); k++){
+//                                    if (str.charAt(k) == '}'){
+//                                        bodyString += '}';
+//                                        break;
+//                                    } else {
+//                                        bodyString += str.charAt(k);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
 
-                        for (int j = 0; j < str.length(); j++){
-                            if (str.charAt(j) == '{') {
-                                for (int k = j; k < str.length(); k++){
-                                    if (str.charAt(k) == '}'){
-                                        bodyString += '}';
-                                        break;
-                                    } else {
-                                        bodyString += str.charAt(k);
-                                    }
-                                }
-                            }
-                        }
+                    for (int j = 0; j < str.length(); j++){
+                       if (str.charAt(j) == '\''){
+                           j++;
+                           for (int k = j; k < str.length(); k++){
+                               if (str.charAt(k) == '\''){
+                                   break;
+                               } else{
+                                   bodyString += str.charAt(k);
+                               }
+                           } break;
+                       }
                     }
+
                     body = new Body(bodyString);
 
                 } else if (parameters[i].equals("-f")) {
                     //TODO
-                    try{
-                        Reader fileReader = new FileReader(parameters[i+1]);
-                        int data = fileReader.read();
-                        while (data != -1){
-                            bodyString += (char)data;
-                        }
-                        body = new Body(bodyString);
+                    f = true;
 
+                    try{
+                        file = new File(parameters[i+1]);
+                        System.out.println("file: " + file);
+
+                        fileReader = new FileReader(file);
+                        System.out.println("fileReader: " + fileReader);
+                        int character;
+                        while ((character=fileReader.read())!= -1) {
+                            bodyString += (char)character;
+                        }
+                        System.out.println(bodyString);
+                        body = new Body(bodyString);
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        System.out.println("Please input Absolute Path of the file!");
+                        //e.printStackTrace();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.out.println("IO Exception occurred");
+                        //e.printStackTrace();
                     }
 
 
@@ -175,17 +197,26 @@ public class Httpc {
             }
 
         }
+        try{
+            if (requestType.equals(Request.Request_Type.GET) && urlString != null) {
+                request = new Request(requestType, queryParameters, httpVersion);
 
-        if (requestType.equals(Request.Request_Type.GET) && urlString != null) {
-            request = new Request(requestType, queryParameters, httpVersion);
+                new GET(hostString, 80, request, v);
 
-            new GET(hostString, 80, request, v);
+            } else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
+                request = new Request(requestType, contentType, httpVersion, queryParameters, body);
+                if (d == true && f == true){
+                    System.out.println("Either [-d] or [-f] can be used but not both.");
+                }else {
+                    new POST(hostString, 80, request, v);
+                }
 
-        } else if (requestType.equals(Request.Request_Type.POST) && urlString != null) {
-            request = new Request(requestType, contentType, httpVersion, queryParameters, body);
-
-            new POST(hostString, 80, request, v);
+            }
+        } catch (NullPointerException e){
+            System.out.println("Due to the input mistake of file path, we cannot provide services.");
         }
+
+
 
     }
 
