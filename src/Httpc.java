@@ -47,7 +47,6 @@ public class Httpc {
         boolean h = false;
         boolean d = false;
         boolean f = false;
-        //String associateHeader; //key:value pairs,
 
         Help help = new Help();
         String contentType = "application/json";
@@ -61,17 +60,18 @@ public class Httpc {
         FileReader fileReader;
 
 
-
+        //split the user input into string array chunks.
         parameters = str.split("\\s+");
 
         
-
+        //check if the user input is empty or not start with httpc
         if (parameters.length <= 1 || !parameters[0].equals("httpc")) {
             System.out.println("Invalid command line.");
         } else {
 
             for (int i = 1; i < parameters.length; i++) {
 
+                // for help commands
                 if (parameters[i].equals("help")) {
 
                     if (parameters.length > i + 1 && parameters[i + 1].equals("get")) {
@@ -83,11 +83,13 @@ public class Httpc {
                     } else {
                         help.help();
                     }
+
+                    // check if user wants verbose info
                 } else if (parameters[i].equals("-v")) {
                     //TODO
                     v = true;
 
-
+                    //check if user wants different content type
                 } else if (parameters[i].equals("-h")) {
                     //TODO
                     h = true;
@@ -102,18 +104,19 @@ public class Httpc {
                         }
                     }
 
-
+                    //check if the user wants GET
                 } else if (parameters[i].equals("get")) {
                     requestType = Request.Request_Type.GET;
 
+                    //check if the user wants POST
                 } else if (parameters[i].equals("post")) {
                     requestType = Request.Request_Type.POST;
 
+                    //check if the host is in correct format and put it into url
                 } else if (parameters[i].contains("http://")) {
-                    //System.out.println("in http");
+
                     urlString = parameters[i];
                     String urlStringNoQuote = urlString.replace("\'", ""); //remove '' from string
-                    //System.out.println(urlStringNoQuote);
 
                     url = new URL(urlStringNoQuote);
 
@@ -124,6 +127,7 @@ public class Httpc {
                         new Query_Parameters(url.getQuery());
                     }
 
+                    //check if user wants different version of HTTP
                 } else if (parameters[i].contains("version")) {
                     if (parameters[i].contains("1.0")) {
                         httpVersion = Request.HTTP_version.HTTP1_0;
@@ -131,6 +135,7 @@ public class Httpc {
                         httpVersion = Request.HTTP_version.HTTP1_1;
                     }
 
+                    //check if user wants to associates an inline data to the body HTTP POST
                 } else if (parameters[i].equals("-d")) {
                     //TODO
                     d = true;
@@ -166,6 +171,7 @@ public class Httpc {
 
                     body = new Body(bodyString);
 
+                    //check if user wants to associate the content of a file to the body HTTP POST
                 } else if (parameters[i].equals("-f")) {
                     //TODO
                     f = true;
@@ -195,8 +201,11 @@ public class Httpc {
 
 
             }
+            
 
         }
+
+        //retrieved all information from user's input, now we could send our request and receive info
         try{
             if (requestType.equals(Request.Request_Type.GET) && urlString != null) {
                 request = new Request(requestType, queryParameters, httpVersion);
@@ -213,7 +222,11 @@ public class Httpc {
 
             }
         } catch (NullPointerException e){
+            //System.out.println(e);
             System.out.println("Due to the input mistake of file path, we cannot provide services.");
+        } catch (Exception e){
+            //System.out.println(e);
+            System.out.println("Some error occurred, please check your input.");
         }
 
 
